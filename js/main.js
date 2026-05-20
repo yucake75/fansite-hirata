@@ -2,7 +2,7 @@
 // 設定
 // ===========================
 const PER_PAGE = 5;
-const JSON_PATH = "data/archives.json";
+const JSON_PATH = "archives.json";
 
 // カテゴリの表示名とバッジクラス
 const CAT_INFO = {
