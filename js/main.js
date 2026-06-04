@@ -16,7 +16,7 @@ const CAT_INFO = {
 // 状態
 // ===========================
 let archives     = [];   // JSONから読み込んだ全データ
-let currentCat   = "all";
+let selectedTags   = new Set(); // 複数タグ選択（空＝すべて表示）
 let currentPage  = 1;
 let currentQuery = "";
 
@@ -40,9 +40,14 @@ async function loadArchives() {
 // ===========================
 function getFiltered() {
   return archives.filter(a => {
-    const matchCat   = currentCat === "all" || a.cat === currentCat;
+     const tags = Array.isArray(a.tags) ? a.tags : (a.cat ? [a.cat] : []);
+
+    // タグ絞り込み：selectedTags が空 = すべて表示、あればOR一致
+    const matchTag = selectedTags.size === 0
+      || tags.some(t => selectedTags.has(t));
+
     const matchQuery = a.title.includes(currentQuery);
-    return matchCat && matchQuery;
+    return matchTag && matchQuery;
   });
 }
 
@@ -59,8 +64,14 @@ function renderCards(items) {
   }
 
   items.forEach((a, i) => {
-    const info = CAT_INFO[a.cat] || { label: "その他", cls: "badge-other" };
+    const tags = Array.isArray(a.tags) ? a.tags : (a.cat ? [a.cat] : ["other"]);
     const dateStr = a.date.replace(/-/g, "/");
+
+    // タグバッジを複数生成
+    const badgesHtml = tags.map(t => {
+      const info = CAT_INFO[t] || { label: t, cls: "badge-other" };
+      return `<span class="badge ${info.cls}">${info.label}</span>`;
+    }).join("");
 
     const li = document.createElement("li");
     li.className = "archive-card";
@@ -71,7 +82,7 @@ function renderCards(items) {
         <p class="card-title">${escapeHtml(a.title)}</p>
         <div class="card-meta">
           <span class="card-date">${dateStr}</span>
-          <span class="badge ${info.cls}">${info.label}</span>
+          ${badgesHtml}
         </div>
       </div>
       <a class="card-link" href="${escapeHtml(a.url)}" target="_blank" rel="noopener noreferrer">
@@ -119,7 +130,7 @@ function renderPagination(total) {
 }
 
 // ===========================
-// 件数表示更新
+// 件数表示
 // ===========================
 function renderCount(total) {
   const el = document.getElementById("resultCount");
@@ -158,8 +169,8 @@ function goPage(p) {
 document.getElementById("filterRow").addEventListener("click", e => {
   const btn = e.target.closest(".tag");
   if (!btn) return;
-  document.querySelectorAll(".tag").forEach(t => t.classList.remove("active"));
-  btn.classList.add("active");
+    document.querySelectorAll(".tag").forEach(t => t.classList.remove("active"));
+    btn.classList.add("active");
   currentCat  = btn.dataset.cat;
   currentPage = 1;
   render();
@@ -192,6 +203,4 @@ function escapeHtml(str) {
 // ===========================
 // 起動：JSON読み込み → 描画（変更）
 // ===========================
-loadArchives().then(() => {
-  render();
-});
+loadArchives().then(() => render());
