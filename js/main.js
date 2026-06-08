@@ -169,9 +169,20 @@ function goPage(p) {
 document.getElementById("filterRow").addEventListener("click", e => {
   const btn = e.target.closest(".tag");
   if (!btn) return;
-    document.querySelectorAll(".tag").forEach(t => t.classList.remove("active"));
-    btn.classList.add("active");
-  currentCat  = btn.dataset.cat;
+
+  const cat = btn.dataset.cat;
+
+  // アクティブを全解除してから選択したものだけアクティブに
+  document.querySelectorAll(".tag").forEach(t => t.classList.remove("active"));
+  btn.classList.add("active");
+
+  if (cat === "all") {
+    selectedTags.clear();
+  } else {
+    selectedTags.clear();
+    selectedTags.add(cat);
+  }
+
   currentPage = 1;
   render();
 });
