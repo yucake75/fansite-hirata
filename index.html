@@ -22,39 +22,59 @@
           </div>
         </div>
       </div>
-      <nav class="site-nav">
-        <a href="index.html" class="nav-link active">アーカイブ</a>
-        <a href="profile.html" class="nav-link">プロフィール</a>
-      </nav>
+
+        <!-- タブボタン -->
+        <div id="tabRow">
+            <button class="tag active" data-tab="archive">アーカイブ</button>
+            <button class="tag" data-tab="game">ゲームから探す</button>
+        </div>
     </div>
   </header>
 
   <main class="main">
     <div class="inner">
 
-      <div class="search-wrap">
-        <span class="search-icon">⌕</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="タイトルで検索..." />
-      </div>
+        <!-- アーカイブセクション（既存をこれで囲む） -->
+        <section id="archiveSection">
 
-      <div class="filter-row" id="filterRow">
-        <button class="tag active" data-cat="all">すべて</button>
-        <button class="tag" data-cat="game">ゲーム実況</button>
-        <button class="tag" data-cat="talk">雑談</button>
-        <button class="tag" data-cat="collab">コラボ</button>
-        <button class="tag" data-cat="other">その他</button>
-      </div>
+            <div class="search-wrap">
+            <span class="search-icon">⌕</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="タイトルで検索..." />
+            </div>
 
-      <p class="result-count" id="resultCount"></p>
+            <div class="filter-row" id="filterRow">
+                <button class="tag active" data-cat="all">すべて</button>
+                <button class="tag" data-cat="game">ゲーム実況</button>
+                <button class="tag" data-cat="talk">雑談</button>
+                <button class="tag" data-cat="collab">コラボ</button>
+                <button class="tag" data-cat="other">その他</button>
+            </div>
 
-      <ul class="archive-list" id="archiveList">
-        <!-- カードはJSで描画されます -->
-      </ul>
+            <p class="result-count" id="resultCount"></p>
 
-      <div class="pagination" id="pagination"></div>
+            <ul class="archive-list" id="archiveList">
+                <!-- カードはJSで描画されます -->
+            </ul>
 
-      <p class="update-note">最終更新：2025/05/12</p>
+            <div class="pagination" id="pagination"></div>
 
+            <p class="update-note">最終更新：2025/05/12</p>
+        </section>
+
+         <!-- ゲームセクション（新規） -->
+        <section id="gameSection" style="display:none">
+            <div id="gameTab"></div>
+        </section>
+
+        <div id="gameModal" class="modal-overlay" style="display:none">
+            <div class="modal-window">
+                <div class="modal-header">
+                <h3 id="modalTitle" class="modal-game-title"></h3>
+                <button id="modalClose" class="modal-close">✕</button>
+                </div>
+                <ul id="modalArchiveList" class="archive-list"></ul>
+            </div>
+        </div>
     </div>
   </main>
 

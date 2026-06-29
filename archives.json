@@ -5,6 +5,7 @@
     "date": "2025-05-10",
     "tags": ["game"],
     "url": "https://twitcasting.tv/xxxxx/movie/000001",
+    "game": "Minecraft",
     "notes": "新しいワールドでの冒険が始まりました！建築や探索を楽しんでいます。"
   },
   {
@@ -12,6 +13,7 @@
     "title": "深夜雑談 〜最近ハマってること話す〜",
     "date": "2025-05-07",
     "tags": ["talk","other"],
+    "game": null,
     "url": "https://twitcasting.tv/xxxxx/movie/000002",
     "notes": "最近ハマっていることや、視聴者さんからの質問に答える雑談配信でした。"
   },
@@ -20,6 +22,7 @@
     "title": "【Apex】ランク戦 プラチナ目指す配信",
     "date": "2025-05-03",
     "tags": ["game"],
+    "game": "Apex Legends",
     "url": "https://twitcasting.tv/xxxxx/movie/000003",
     "notes": "ランク戦に挑戦する配信でした。"
   },
@@ -28,6 +31,7 @@
     "title": "お誕生日配信！ありがとうございます",
     "date": "2025-04-28",
     "tags": ["other","talk"],
+    "game": null,
     "url": "https://twitcasting.tv/xxxxx/movie/000004",
     "notes": "お誕生日を祝っていただきありがとうございました！みんなと楽しい時間を過ごせました。"
   },
@@ -36,6 +40,7 @@
     "title": "【原神】復帰勢がまた始める！",
     "date": "2025-04-21",
     "tags": ["game"],
+    "game": "原神",
     "url": "https://twitcasting.tv/xxxxx/movie/000005",
     "notes": "原神の復帰を祝う配信でした。"
   },
@@ -44,6 +49,7 @@
     "title": "〇〇さんとコラボ配信！",
     "date": "2025-04-15",
     "tags": ["collab","talk"],
+    "game": null,
     "url": "https://twitcasting.tv/xxxxx/movie/000006",
     "notes": "〇〇さんとのコラボ配信でした。楽しい時間をありがとうございました！"
   },
@@ -52,6 +58,7 @@
     "title": "【Stardew Valley】農場のんびり生活",
     "date": "2025-04-10",
     "tags": ["game"],
+    "game": "Stardew Valley",
     "url": "https://twitcasting.tv/xxxxx/movie/000007",
     "notes": "Stardew Valleyでのんびり農場生活を楽しむ配信でした。"
   },
@@ -60,6 +67,7 @@
     "title": "春の近況報告雑談",
     "date": "2025-04-03",
     "tags": ["talk"],
+    "game": null,
     "url": "https://twitcasting.tv/xxxxx/movie/000008",
     "notes": "春の近況報告をする雑談配信でした。新しいことに挑戦したいと思っています！"
   }
