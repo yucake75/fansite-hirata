@@ -368,6 +368,16 @@ body {
   cursor: default;
 }
 
+.page-dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: #999;
+  user-select: none;
+}
+
 /* ===========================
    更新日
 =========================== */

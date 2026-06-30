@@ -93,7 +93,6 @@ function renderCards(items) {
     list.appendChild(li);
   });
 }
-
 // ===========================
 // ページネーション描画
 // ===========================
@@ -112,14 +111,22 @@ function renderPagination(total) {
   prev.addEventListener("click", () => goPage(currentPage - 1));
   pag.appendChild(prev);
 
-  // ページ番号
-  for (let p = 1; p <= maxPage; p++) {
-    const btn = document.createElement("button");
-    btn.className = "page-btn" + (p === currentPage ? " active" : "");
-    btn.textContent = p;
-    btn.addEventListener("click", () => goPage(p));
-    pag.appendChild(btn);
-  }
+  // ページ番号（省略付き）
+  const pages = getPaginationRange(currentPage, maxPage, 2);
+  pages.forEach((p) => {
+    if (p === "...") {
+      const dots = document.createElement("span");
+      dots.className = "page-dots";
+      dots.textContent = "…";
+      pag.appendChild(dots);
+    } else {
+      const btn = document.createElement("button");
+      btn.className = "page-btn" + (p === currentPage ? " active" : "");
+      btn.textContent = p;
+      btn.addEventListener("click", () => goPage(p));
+      pag.appendChild(btn);
+    }
+  });
 
   // 次へ
   const next = document.createElement("button");
@@ -128,6 +135,36 @@ function renderPagination(total) {
   next.disabled = currentPage === maxPage;
   next.addEventListener("click", () => goPage(currentPage + 1));
   pag.appendChild(next);
+}
+
+// ===========================
+// ページ番号配列を生成（省略付き）
+// ===========================
+function getPaginationRange(current, total, delta = 2) {
+  const range = [];
+  const rangeWithDots = [];
+  let last;
+
+  for (let i = 1; i <= total; i++) {
+    if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+      range.push(i);
+    }
+  }
+
+  for (const i of range) {
+    if (last) {
+      if (i - last === 2) {
+        // 1つだけ飛ぶ場合は省略せず数字を出す
+        rangeWithDots.push(last + 1);
+      } else if (i - last !== 1) {
+        rangeWithDots.push("...");
+      }
+    }
+    rangeWithDots.push(i);
+    last = i;
+  }
+
+  return rangeWithDots;
 }
 
 // ===========================
