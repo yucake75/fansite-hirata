@@ -63,10 +63,21 @@ def fetch_all_movies() -> list[dict]:
     all_movies = []
     offset = 0
     limit = 50
+    MAX_OFFSET = 1000  # TwitCasting API の offset 上限
 
     while True:
+        if offset > MAX_OFFSET:
+            print(f"  offset が上限({MAX_OFFSET})に達したため取得を終了します")
+            break
+
         print(f"  取得中: offset={offset} ...", flush=True)
-        data = fetch_movies(offset=offset, limit=limit)
+        try:
+            data = fetch_movies(offset=offset, limit=limit)
+        except urllib.error.HTTPError as e:
+            if e.code == 400:
+                print(f"  offset={offset} で400エラー。取得できる範囲はここまでと判断し終了します")
+                break
+            raise
         movies = data.get("movies", [])
         total = data.get("total_count", 0)
 
