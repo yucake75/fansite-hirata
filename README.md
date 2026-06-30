@@ -1,5 +1,3 @@
-# fansite-rader
-
 ## アーカイブ自動取得セットアップ
 
 ツイキャスの新着アーカイブを自動取得し、`archives.json` に追記する仕組みです。
@@ -18,7 +16,7 @@ https://twitcasting.tv/developer.php で新規登録し、`ClientID` / `ClientSe
 | `TWITCASTING_CLIENT_ID` | 手順1のClientID |
 | `TWITCASTING_CLIENT_SECRET` | 手順1のClientSecret |
 
-### 3. 動作確認
+### 動作確認
 
 **Actions → Update TwitCasting Archives → Run workflow** で手動実行できます。
 以降は毎日 JST 10:00 に自動実行され、新着アーカイブのみ `archives.json` の先頭に追記されます。
