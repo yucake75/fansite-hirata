@@ -1,0 +1,39 @@
+name: Update TwitCasting Archives
+
+on:
+  schedule:
+    # 毎日 JST 10:00 (UTC 01:00) に実行
+    - cron: "0 1 * * *"
+  workflow_dispatch:  # 手動実行も可
+
+permissions:
+  contents: write  # archives.json をコミット・プッシュするために必要
+
+jobs:
+  update-archives:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch archives from TwitCasting API
+        env:
+          TWITCASTING_USER_ID: ${{ secrets.TWITCASTING_USER_ID }}
+          TWITCASTING_CLIENT_ID: ${{ secrets.TWITCASTING_CLIENT_ID }}
+          TWITCASTING_CLIENT_SECRET: ${{ secrets.TWITCASTING_CLIENT_SECRET }}
+          OUTPUT_FILE: archives.json
+        run: python fetch_archives.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add archives.json
+          git diff --cached --quiet || git commit -m "chore: update archives [$(date -u '+%Y-%m-%dT%H:%M:%SZ')]"
+          git push
