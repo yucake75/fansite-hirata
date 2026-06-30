@@ -18,8 +18,9 @@
 
 このスクリプトは TwitCasting API から新着アーカイブを取得し、
 既存データを壊さずに「新着分だけ」を先頭に追記する。
-tags / game / notes は API では取得できないため、
-新規追加分は手動で書き換えてもらう前提のデフォルト値を入れる。
+tags / game は game_keywords.json のキーワードリストとタイトルを照合し、
+一致すれば自動判定する。マッチしなかった場合のみ tags:["other"] / game:null
+のままにし、手動編集してもらう。notes は API では取得できないため常に空。
 """
 
 import json
@@ -37,6 +38,7 @@ USER_ID       = os.environ.get("TWITCASTING_USER_ID", "YOUR_USER_ID")
 CLIENT_ID     = os.environ.get("TWITCASTING_CLIENT_ID", "")
 CLIENT_SECRET = os.environ.get("TWITCASTING_CLIENT_SECRET", "")
 OUTPUT_FILE   = os.environ.get("OUTPUT_FILE", "archives.json")
+GAME_KEYWORDS_FILE = os.environ.get("GAME_KEYWORDS_FILE", "game_keywords.json")
 
 BASE_URL = "https://apiv2.twitcasting.tv"
 
@@ -100,17 +102,46 @@ def to_date_str(unix_ts) -> str:
     return datetime.fromtimestamp(unix_ts, tz=timezone.utc).strftime("%Y-%m-%d")
 
 
-def normalize(movie: dict) -> dict:
+def load_game_keywords(path: str = GAME_KEYWORDS_FILE) -> list[list[str]]:
+    """ゲーム名キーワードリストを読み込む。なければ空リスト"""
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+            return data.get("games", [])
+    return []
+
+
+def detect_game(title: str, game_keywords: list[list[str]]) -> str | None:
+    """
+    タイトル文字列にキーワードリストの単語が含まれていたら、
+    対応する正式名（リストの先頭要素）を返す。マッチしなければ None。
+    """
+    if not title:
+        return None
+    for aliases in game_keywords:
+        if not aliases:
+            continue
+        canonical = aliases[0]
+        for alias in aliases:
+            if alias and alias.lower() in title.lower():
+                return canonical
+    return None
+
+
+def normalize(movie: dict, game_keywords: list[list[str]]) -> dict:
     """API レスポンスを既存JSONのフォーマットに変換する"""
+    title = movie.get("title") or f"配信 #{movie.get('id')}"
+    matched_game = detect_game(title, game_keywords)
+
     return {
         "id":       movie.get("id"),              # ツイキャスの movie id（文字列）をそのまま使う
-        "title":    movie.get("title") or f"配信 #{movie.get('id')}",
+        "title":    title,
         "date":     to_date_str(movie.get("created")),
-        "tags":     ["other"],                      # API では分類不可。後で手動編集してください
+        "tags":     ["game"] if matched_game else ["other"],  # マッチすればgameタグ、未マッチはother（要手動確認）
         "url":      movie.get("link"),
-        "game":     None,                            # 同上
-        "notes":    "",                               # 同上
-        "_synced":  True,                             # 自動取得分の識別用フラグ（手動編集時に消してOK）
+        "game":     matched_game,                              # キーワード一覧から自動判定。未マッチはNone
+        "notes":    "",                                         # API では取得不可。後で手動編集してください
+        "_synced":  True,                                       # 自動取得分の識別用フラグ（手動編集時に消してOK）
     }
 
 
@@ -166,8 +197,14 @@ def main():
     # is_recorded（録画あり）のみ対象にする
     raw_movies = [m for m in raw_movies if m.get("is_recorded")]
 
-    fetched = [normalize(m) for m in raw_movies]
+    game_keywords = load_game_keywords()
+    print(f"ゲームキーワード {len(game_keywords)} 件を読み込みました")
+
+    fetched = [normalize(m, game_keywords) for m in raw_movies]
     print(f"API から録画あり {len(fetched)} 件取得")
+
+    auto_matched = sum(1 for f in fetched if f["game"])
+    print(f"  うちゲーム自動判定できたもの: {auto_matched} 件")
 
     existing = load_existing(OUTPUT_FILE)
     merged, new_count = merge(existing, fetched)
@@ -177,7 +214,8 @@ def main():
 
     print(f"完了: 新着 {new_count} 件 / 合計 {len(merged)} 件 → {OUTPUT_FILE}")
     if new_count > 0:
-        print("※ 新着分の tags / game / notes は未分類です。必要に応じて手動で編集してください。")
+        print("※ ゲーム名が自動判定できなかった新着は tags:[\"other\"] / game:null のままです。")
+        print("  game_keywords.json にキーワードを追加するか、archives.json を直接編集してください。")
 
 
 if __name__ == "__main__":
