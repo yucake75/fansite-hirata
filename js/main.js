@@ -252,7 +252,25 @@ function escapeHtml(str) {
 // ===========================
 // 起動：JSON読み込み → 描画（変更）
 // ===========================
-loadArchives().then(() => render());
+loadArchives().then(() => {
+  renderUpdatedAt();
+  render();
+});
+
+
+function renderUpdatedAt() {
+  const updatedAt = new Date().toLocaleString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const el = document.getElementById("updatedAt");
+  if (el) {
+    el.textContent = updatedAt;
+  }
+}
 
 
 // ===========================
