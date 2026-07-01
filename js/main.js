@@ -1,7 +1,7 @@
 // ===========================
 // 設定
 // ===========================
-const PER_PAGE = 5;
+const PER_PAGE = 15;
 const JSON_PATH = "archives.json";
 
 // カテゴリの表示名とバッジクラス
