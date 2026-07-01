@@ -137,7 +137,7 @@ def normalize(movie: dict, game_keywords: list[list[str]]) -> dict:
         "id":       movie.get("id"),              # ツイキャスの movie id（文字列）をそのまま使う
         "title":    title,
         "date":     to_date_str(movie.get("created")),
-        "tags":     ["game"] if matched_game else ["other"],  # マッチすればgameタグ、未マッチはother（要手動確認）
+        "tags":     ["game"] if matched_game else ["talk"],  # マッチすればgameタグ、未マッチはtalk（要手動確認）
         "url":      movie.get("link"),
         "game":     matched_game,                              # キーワード一覧から自動判定。未マッチはNone
         "notes":    "",                                         # API では取得不可。後で手動編集してください
