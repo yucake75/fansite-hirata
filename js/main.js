@@ -276,17 +276,32 @@ function renderUpdatedAt() {
 // ===========================
 // ゲームタブ描画
 // ===========================
+let currentGameQuery = "";
+let gameListCache = []; // ゲーム名一覧のキャッシュ（毎回全archivesを走査しないように）
+ 
 function renderGameTab() {
   const container = document.getElementById("gameTab");
   container.innerHTML = "";
-
-  // ゲーム名を昇順で収集
-  const gameList = [...new Set(archives.map(a => a.game).filter(Boolean))].sort();
-
-  // ゲーム名一覧
+ 
+  // ゲーム名を昇順で収集（初回のみ計算、以降はキャッシュを再利用）
+  if (gameListCache.length === 0) {
+    gameListCache = [...new Set(archives.map(a => a.game).filter(Boolean))].sort();
+  }
+ 
+  const query = currentGameQuery.trim().toLowerCase();
+  const gameList = query
+    ? gameListCache.filter(g => g.toLowerCase().includes(query))
+    : gameListCache;
+ 
   const ul = document.createElement("ul");
   ul.className = "game-list";
-
+ 
+  if (gameList.length === 0) {
+    ul.innerHTML = '<li class="empty-state">該当するゲームが見つかりませんでした。</li>';
+    container.appendChild(ul);
+    return;
+  }
+ 
   gameList.forEach(g => {
     const count = archives.filter(a => a.game === g).length;
     const li = document.createElement("li");
@@ -295,18 +310,33 @@ function renderGameTab() {
     li.addEventListener("click", () => openGameModal(g)); // ← モーダルを開く
     ul.appendChild(li);
   });
-
+ 
   container.appendChild(ul);
 }
-
-
+ 
+// ===========================
+// イベント：ゲーム検索
+// ===========================
+let gameSearchTimer;
+const gameSearchInput = document.getElementById("gameSearchInput");
+if (gameSearchInput) {
+  gameSearchInput.addEventListener("input", e => {
+    clearTimeout(gameSearchTimer);
+    gameSearchTimer = setTimeout(() => {
+      currentGameQuery = e.target.value.trim();
+      renderGameTab();
+    }, 200);
+  });
+}
+ 
+ 
 function renderGameButtons(gameList) {
   const wrap = document.getElementById("gameButtonWrap");
   wrap.innerHTML = "";
-
+ 
   const query = currentGame.toLowerCase();
   const filtered = gameList.filter(g => g.toLowerCase().includes(query));
-
+ 
   filtered.forEach(g => {
     const btn = document.createElement("button");
     btn.className = "tag" + (currentGame === g ? " active" : "");
@@ -320,22 +350,22 @@ function renderGameButtons(gameList) {
     wrap.appendChild(btn);
   });
 }
-
+ 
 function renderGameResults() {
   const wrap = document.getElementById("gameResults");
   wrap.innerHTML = "";
-
+ 
   if (!currentGame) return;
-
+ 
   const matched = archives.filter(a =>
     a.game && a.game.toLowerCase().includes(currentGame.toLowerCase())
   );
-
+ 
   if (matched.length === 0) {
     wrap.innerHTML = '<p class="empty-state">該当する配信が見つかりませんでした。</p>';
     return;
   }
-
+ 
   const ul = document.createElement("ul");
   ul.id = "archiveList";
   matched.forEach((a, i) => {
@@ -344,7 +374,7 @@ function renderGameResults() {
       const info = CAT_INFO[t] || { label: t, cls: "badge-other" };
       return `<span class="badge ${info.cls}">${info.label}</span>`;
     }).join("");
-
+ 
     const li = document.createElement("li");
     li.className = "archive-card";
     li.style.animationDelay = `${i * 40}ms`;
@@ -366,40 +396,40 @@ function renderGameResults() {
   });
   wrap.appendChild(ul);
 }
-
+ 
 document.getElementById("tabRow").addEventListener("click", e => {
   const btn = e.target.closest("[data-tab]");
   if (!btn) return;
-
+ 
   document.querySelectorAll("[data-tab]").forEach(t => t.classList.remove("active"));
   btn.classList.add("active");
-
+ 
   const tab = btn.dataset.tab;
   document.getElementById("archiveSection").style.display = tab === "archive" ? "" : "none";
   document.getElementById("gameSection").style.display   = tab === "game"    ? "" : "none";
-
+ 
   if (tab === "game") renderGameTab();
 });
-
-
+ 
+ 
 // ===========================
 // ゲームモーダル
 // ===========================
 function openGameModal(game) {
   const matched = archives.filter(a => a.game === game);
-
+ 
   document.getElementById("modalTitle").textContent = `🎮 ${game}（${matched.length}件）`;
-
+ 
   const list = document.getElementById("modalArchiveList");
   list.innerHTML = "";
-
+ 
   matched.forEach((a, i) => {
     const tags = Array.isArray(a.tags) ? a.tags : (a.cat ? [a.cat] : []);
     const badgesHtml = tags.map(t => {
       const info = CAT_INFO[t] || { label: t, cls: "badge-other" };
       return `<span class="badge ${info.cls}">${info.label}</span>`;
     }).join("");
-
+ 
     const li = document.createElement("li");
     li.className = "archive-card";
     li.style.animationDelay = `${i * 40}ms`;
@@ -418,15 +448,15 @@ function openGameModal(game) {
     `;
     list.appendChild(li);
   });
-
+ 
   document.getElementById("gameModal").style.display = "flex";
 }
-
+ 
 // モーダルを閉じる
 document.getElementById("modalClose").addEventListener("click", () => {
   document.getElementById("gameModal").style.display = "none";
 });
-
+ 
 // オーバーレイクリックでも閉じる
 document.getElementById("gameModal").addEventListener("click", e => {
   if (e.target === e.currentTarget) {
