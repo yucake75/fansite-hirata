@@ -489,6 +489,190 @@ body {
   list-style: none;
 }
 
+/* ===========================
+   ヘッダー内 配信者リンク（YouTube / ツイキャス）
+   ※ archiveSection内、検索バーの上に表示
+=========================== */
+.social-links {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.social-links a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  text-decoration: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 100px;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.social-links a:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.social-links svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.btn-youtube { background: #ff3b30; }
+.btn-twicas  { background: #00a3e0; }
+
+
+/* ===========================
+   お問い合わせ
+=========================== */
+.contact-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.contact-head h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.contact-head p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.contact-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+form.contact {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.field-row .field { flex: 1; }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.field label .req {
+  color: #c0392b;
+  font-size: 11px;
+  margin-left: 2px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.field textarea {
+  min-height: 110px;
+  resize: vertical;
+  line-height: 1.7;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--border-dark);
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--text-faint);
+}
+
+.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.consent input {
+  margin-top: 3px;
+  accent-color: var(--text);
+}
+
+.submit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+button.submit {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--bg);
+  background: var(--text);
+  border: none;
+  padding: 10px 24px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+button.submit:hover { opacity: 0.85; }
+
+.submit-hint {
+  font-size: 11px;
+  color: var(--text-faint);
+}
+
+/* ===========================
+   フッター
+=========================== */
+footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
 
 /* ===========================
    レスポンシブ
@@ -498,4 +682,6 @@ body {
   .nav-link { padding: 6px 8px; font-size: 12px; }
   .card-link span { display: none; }
   .card-link { padding: 6px; }
+  .field-row { flex-direction: column; }
+  .social-links a { padding: 8px 12px; }
 }
