@@ -78,7 +78,7 @@ function renderCards(items) {
     li.className = "archive-card";
     li.style.animationDelay = `${i * 40}ms`;
     li.innerHTML = `
-      <div class="card-thumb">▷</div>
+      ${thumbHtml(a.url)}
       <div class="card-body">
         <p class="card-title">${escapeHtml(a.title)}</p>
         <div class="card-meta">
@@ -250,6 +250,25 @@ function escapeHtml(str) {
 }
 
 // ===========================
+// サムネイルHTML生成
+// ===========================
+const THUMB_PLACEHOLDER = "▷";
+
+function getThumbUrl(url) {
+  if (!url || !url.includes("twitcasting.tv")) return null;
+  return url.replace(/^http:/, "https:").replace(/\/$/, "") + "/thumbnail";
+}
+
+function thumbHtml(url) {
+  const src = getThumbUrl(url);
+  if (!src) return `<div class="card-thumb">${THUMB_PLACEHOLDER}</div>`;
+  return `<div class="card-thumb has-img">
+    <img src="${escapeHtml(src)}" alt="" loading="lazy"
+         onerror="this.parentNode.classList.remove('has-img');this.parentNode.textContent='${THUMB_PLACEHOLDER}';">
+  </div>`;
+}
+
+// ===========================
 // 起動：JSON読み込み → 描画（変更）
 // ===========================
 loadArchives().then(() => {
@@ -379,7 +398,7 @@ function renderGameResults() {
     li.className = "archive-card";
     li.style.animationDelay = `${i * 40}ms`;
     li.innerHTML = `
-      <div class="card-thumb">▷</div>
+      ${thumbHtml(a.url)}
       <div class="card-body">
         <p class="card-title">${escapeHtml(a.title)}</p>
         <div class="card-meta">
@@ -434,7 +453,7 @@ function openGameModal(game) {
     li.className = "archive-card";
     li.style.animationDelay = `${i * 40}ms`;
     li.innerHTML = `
-      <div class="card-thumb">▷</div>
+      ${thumbHtml(a.url)}
       <div class="card-body">
         <p class="card-title">${escapeHtml(a.title)}</p>
         <div class="card-meta">
